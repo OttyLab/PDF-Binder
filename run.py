@@ -1,6 +1,7 @@
 import csv
 import sys
 import re
+import os
 import PyPDF2
 
 args = sys.argv
@@ -15,9 +16,12 @@ page_range = r'^(\d+)-(\d+)$'
 with open(args[1]) as list:
     csv_reader = csv.reader(list)
     for row in csv_reader:
-        print(row[0].encode('cp932').decode('utf-8'))
-        pdf_reader = PyPDF2.PdfReader(row[0].encode('cp932').decode('utf-8'))
+        file_name = row[0].encode('cp932').decode('utf-8') if os.name == 'nt' else row[0]
         del row[0]
+
+        print(file_name)
+        pdf_reader = PyPDF2.PdfReader(file_name)
+
         for pages in row:
             pages = pages.replace(' ', '')
             match_page_num = re.match(page_num, pages)
